@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, uuid, integer } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  walletAddress: text("wallet_address").unique().notNull(),
+  // walletAddress: text("wallet_address").unique().notNull(),
   username: text("username").unique(),
   avatarUrl: text("avatar_url"),
   trustScore: integer("trust_score").default(0),

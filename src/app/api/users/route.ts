@@ -18,10 +18,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { walletAddress, username, avatarUrl } = await request.json();
+    const { username, avatarUrl } = await request.json();
     const newUser = await db
       .insert(users)
-      .values({ walletAddress, username, avatarUrl })
+      .values({  username, avatarUrl })
       .returning();
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
