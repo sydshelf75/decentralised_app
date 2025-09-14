@@ -118,5 +118,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-color: #0c0a09;
+    background-image: radial-gradient(circle at 1px 1px, #3c3c3c 1px, transparent 0);
+    background-size: 24px 24px;
   }
 }
