@@ -1,3 +1,5 @@
+'use client';
+
 import { Sidebar } from "@/components/layout/sidebar";
 import { MainContent } from "@/components/layout/main-content";
 import { RightSidebar } from "@/components/layout/right-sidebar";
@@ -5,6 +7,8 @@ import { GlassCard } from "@/components/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Brain, Users, TrendingUp } from "lucide-react";
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api-client';
 
 export default function Home() {
   return (
@@ -126,7 +130,7 @@ export default function Home() {
           {/* Knowledge Feed */}
           <section>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-white">Knowledge Feed</h2>
+              <h2 className="text-2xl font-bold text-white">Communities</h2>
               <div className="flex gap-2">
                 <Badge variant="outline" className="text-gray-300">
                   Latest
@@ -140,66 +144,70 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="space-y-4">
-              {[1, 2].map((index) => (
-                <GlassCard key={index} className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge
-                      variant="secondary"
-                      className="bg-purple-600/20 text-purple-300"
-                    >
-                      Web3
-                    </Badge>
-                    <Badge
-                      variant="secondary"
-                      className="bg-orange-600/20 text-orange-300"
-                    >
-                      Development
-                    </Badge>
-                    {index === 1 && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-yellow-600/20 text-yellow-300"
-                      >
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                        Hot
-                      </Badge>
-                    )}
-                  </div>
-
-                  <h3 className="text-lg font-semibold text-white mb-3">
-                    {index === 1
-                      ? "Best practices for smart contract security auditing?"
-                      : "How to implement zkSNARKs in Ethereum applications?"}
-                  </h3>
-
-                  <div className="text-gray-300 mb-4">
-                    {index === 1
-                      ? "Looking for comprehensive guidelines on auditing Solidity contracts..."
-                      : "Need help understanding zero-knowledge proofs implementation..."}
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                      <span>🧠 2 AI responses</span>
-                      <span>👥 5 expert answers</span>
-                      <span>✅ 12 validations</span>
-                    </div>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-full"
-                    >
-                      View Knowledge
-                    </Button>
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
+            <CommunitiesList />
           </section>
         </>
       </MainContent>
       <RightSidebar />
+    </div>
+  );
+}
+
+function CommunitiesList() {
+  const { data: communities, isLoading, isError } = useQuery({
+    queryKey: ["communities"],
+    queryFn: () => apiClient.getCommunities(),
+  });
+
+  if (isLoading) {
+    return <div className="text-white">Loading communities...</div>;
+  }
+
+  if (isError) {
+    return <div className="text-red-500">Error loading communities.</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      {communities?.map((community: any) => (
+        <GlassCard key={community.id} className="p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Badge
+              variant="secondary"
+              className="bg-purple-600/20 text-purple-300"
+            >
+              {community.name}
+            </Badge>
+            <Badge
+              variant="secondary"
+              className="bg-orange-600/20 text-orange-300"
+            >
+              {community.description}
+            </Badge>
+          </div>
+
+          <h3 className="text-lg font-semibold text-white mb-3">
+            {community.name}
+          </h3>
+
+          <div className="text-gray-300 mb-4">
+            {community.description}
+          </div>
+
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4 text-sm text-gray-400">
+              <span>👥 {community.memberCount || 0} members</span>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-full"
+            >
+              View Community
+            </Button>
+          </div>
+        </GlassCard>
+      ))}
     </div>
   );
 }
