@@ -35,7 +35,7 @@ export function Sidebar() {
     <aside className="w-60">
       <GlassCard className="p-6 h-full flex flex-col">
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-8">
+        {/* <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
             <Brain className="w-6 h-6 text-white" />
           </div>
@@ -43,7 +43,7 @@ export function Sidebar() {
             <span className="text-xl font-bold text-white">DHKE</span>
             <div className="text-xs text-gray-400">Knowledge Engine</div>
           </div>
-        </div>
+        </div> */}
 
         {/* Navigation */}
         <nav className="flex flex-col gap-2 mb-8">
