@@ -10,6 +10,7 @@ import { CheckCircle, Brain, Users, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { Header } from "@/components/layout/header";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   return (
