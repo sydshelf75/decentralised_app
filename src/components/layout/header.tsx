@@ -25,13 +25,14 @@ export function Header() {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, userId }),
       });
 
       const data = await res.json();
-      console.log("data", data);
-      if (data.text) {
-        alert(`🤖 Gemini says:\n\n${data.text}`);
+      console.log("Saved AI answer:", data);
+
+      if (data.content) {
+        alert(`🤖 Gemini says:\n\n${data.content}`);
       } else {
         alert("No response from AI. Try again.");
       }
