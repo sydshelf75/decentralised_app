@@ -5,9 +5,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Brain, Users, TrendingUp, BookOpen, Zap, Settings, Newspaper } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const navItems = [
-  { icon: Brain, label: "Knowledge Feed", href: "/", active: true },
+  { icon: Brain, label: "Knowledge Feed", href: "/" },
   { icon: TrendingUp, label: "Trending", href: "/trending" },
   { icon: Users, label: "Expert Network", href: "/experts" },
   { icon: BookOpen, label: "My Learning", href: "/learning" },
@@ -25,6 +26,8 @@ const knowledgeCategories = [
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="w-60">
       <GlassCard className="p-6 h-full flex flex-col">
@@ -34,10 +37,17 @@ export function Sidebar() {
         <nav className="flex flex-col gap-2 mb-8">
           {navItems.map((item) => {
             const IconComponent = item.icon;
+            const isActive = pathname === item.href;
+
             return (
-              <Link key={item.href} href={item.href} className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all ${item.active ? "text-white bg-gradient-to-r from-indigo-600/50 to-purple-600/30 border border-indigo-500/30" : "text-gray-400 hover:bg-gray-700/30 hover:text-white"}`}>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all
+              ${isActive ? "text-white bg-gradient-to-r from-indigo-600/50 to-purple-600/30 border border-indigo-500/30" : "text-gray-400 hover:bg-gray-700/30 hover:text-white"}`}
+              >
                 <IconComponent className="w-5 h-5" />
-                <span className={item.active ? "font-semibold" : "font-medium"}>{item.label}</span>
+                <span className={isActive ? "font-semibold" : "font-medium"}>{item.label}</span>
               </Link>
             );
           })}
