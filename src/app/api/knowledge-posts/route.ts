@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const allPosts = await db.select().from(knowledgePosts);
+    console.log("allPosts:", allPosts);
     return NextResponse.json(allPosts);
   } catch (error) {
     console.error(error);
