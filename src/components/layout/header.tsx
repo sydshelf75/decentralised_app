@@ -75,7 +75,7 @@ export function Header() {
             </Button>
             <Button className="rounded-full bg-indigo-600 hover:bg-indigo-500 px-4 py-2 flex items-center gap-2">
               <Plus className="w-4 h-4" />
-              <span>Create</span>
+              <Link href={"/submit"}>Create</Link>
             </Button>
 
             <DropdownMenu>

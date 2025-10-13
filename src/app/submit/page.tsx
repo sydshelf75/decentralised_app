@@ -1,17 +1,24 @@
 import { CreatePostForm } from "@/components/create-post-form";
+import { Sidebar } from "@/components/layout/sidebar";
+import { MainContent } from "@/components/layout/main-content";
+import { RightSidebar } from "@/components/layout/right-sidebar";
 import { Header } from "@/components/layout/header";
 
 export default function CreatePostPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-3xl mx-auto">
+    <>
+      <div className="w-full px-7 py-4">
+        <Header />
+      </div>
+      <div className="grid  grid-cols-[240px_1fr_300px] gap-6 p-6 h-screen">
+        <Sidebar />
+        <MainContent>
+          <div className="w-full mx-auto">
             <CreatePostForm />
           </div>
-        </div>
-      </main>
-    </div>
+        </MainContent>
+        <RightSidebar />
+      </div>
+    </>
   );
 }
