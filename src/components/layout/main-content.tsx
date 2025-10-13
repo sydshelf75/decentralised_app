@@ -18,7 +18,7 @@ interface Message {
   };
 }
 
-export function MainContent() {
+export function MainContent({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,12 +67,16 @@ export function MainContent() {
   return (
     <main className="flex-1 flex flex-col gap-6 overflow-y-auto scrollbar-hide">
       {/* Knowledge Feed Header */}
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-2xl font-bold text-white">📚 Knowledge Feed</h2>
-        <Badge variant="outline" className="text-gray-300">
-          AI + Expert Discussions
-        </Badge>
-      </div>
+      {children ? (
+        children
+      ) : (
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-2xl font-bold text-white">📚 Knowledge Feed</h2>
+          <Badge variant="outline" className="text-gray-300">
+            AI + Expert Discussions
+          </Badge>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center items-center h-40 text-gray-400">
