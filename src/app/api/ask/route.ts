@@ -1,5 +1,6 @@
+// app/api/ask/route.ts
 import { db } from "@/config/db";
-import { answers, answerTypeEnum } from "@/models/knowledge";
+import { answers, knowledgePosts, answerTypeEnum } from "@/models/knowledge";
 import { GoogleGenAI } from "@google/genai";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -7,49 +8,63 @@ import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req: NextRequest) {
     try {
-
         const session = await getServerSession(authOptions);
-
-
 
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const userId = session.user.id;
+        const { question } = await req.json();
 
-
-        const { question, knowledgePostId } = await req.json();
-
-        if (!question || !userId) {
-            return new Response(JSON.stringify({ error: "Question and userId are required" }), { status: 400 });
+        if (!question) {
+            return NextResponse.json({ error: "Question is required" }, { status: 400 });
         }
 
-        const ai = new GoogleGenAI({ apiKey: "AIzaSyCXxYDV8ZDQVgyHnYwyi65cPEnq5efiUcU" });
+        // 1. Create a new knowledge post
+        const newKnowledgePost = await db
+            .insert(knowledgePosts)
+            .values({
+                userId,
+                title: question,
+                content: null,
+            })
+            .returning();
 
-        const response = await ai.models.generateContentStream({
-            model: "gemini-2.0-flash",
-            // contents: "Write a story about a magic backpack.",
-            contents: question
+        const knowledgePostId = newKnowledgePost[0].id;
+
+        // 2. Get AI answer
+        const ai = new GoogleGenAI({
+            apiKey: process.env.GOOGLE_GENAI_API_KEY!, // safer than hardcoding
         });
-        let text = "";
-        for await (const chunk of response) {
-            console.log(chunk.text);
-            text += chunk.text;
-        }
 
-        // store in database
-        const record = await db.insert(answers).values({
-            knowledgePostId: knowledgePostId || null,
-            userId,
-            content: text,
-            answerType: "AI",
-            isVerified: false,
-        }).returning()
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: `Please provide a comprehensive answer to this question: ${question}`,
+        });
 
-        return NextResponse.json(record[0]);
+        const aiAnswer = response.text || "No answer generated.";
+
+        // 3. Store AI answer
+        const aiAnswerRecord = await db
+            .insert(answers)
+            .values({
+                knowledgePostId,
+                userId,
+                content: aiAnswer,
+                answerType: answerTypeEnum.enumValues[0],
+                confidenceScore: 0.85,
+                isVerified: false,
+            })
+            .returning();
+
+        return NextResponse.json({
+            knowledgePost: newKnowledgePost[0],
+            aiAnswer: aiAnswerRecord[0],
+            message: "Question posted and AI answer generated. Experts will provide additional answers soon.",
+        });
     } catch (error: any) {
         console.error(error);
-        return new NextResponse(JSON.stringify({ error: error.message }), { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
